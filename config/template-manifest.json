@@ -23,9 +23,9 @@
     "template_base": "TEMPLATE_BASE.md"
   },
   "artifacts": {
-    "role": "dev",
+    "role": "template",
     "character_instances_allowed": false,
-    "contains_user_data": true,
+    "contains_user_data": false,
     "sample_character_data": false
   },
   "ownership": {

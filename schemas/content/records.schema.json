@@ -4,6 +4,33 @@
   "title": "HADA Content Studio records",
   "$defs": {
     "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,95}$" },
+    "series_layout": {
+      "type": "object",
+      "required": ["orientation", "layout_variation", "additional_shared_elements", "next_page_anticipation"],
+      "properties": {
+        "orientation": { "enum": ["portrait", "landscape"] },
+        "layout_variation": { "enum": ["maximum", "custom"] },
+        "layout_variation_details": { "type": "string", "minLength": 1 },
+        "additional_shared_elements": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "next_page_anticipation": { "enum": ["required", "optional", "disabled"] }
+      },
+      "additionalProperties": false
+    },
+    "female_character_visual_defaults": {
+      "type": "object",
+      "properties": {
+        "age_years": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "adult": { "type": "boolean" },
+        "presentation": { "type": "string", "minLength": 1 },
+        "default_outfit": { "type": "string", "minLength": 1 },
+        "pants_allowed_contexts": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "outerwear_allowed_contexts": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "open_front_outerwear_with_above_knee_skirt": { "type": "boolean" },
+        "summer_short_sleeve_target_fraction": { "type": "number", "minimum": 0, "maximum": 1 },
+        "swimming_outfit_default": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
     "mini_project": {
       "type": "object",
       "required": ["schema_version", "id", "title", "domain", "purpose", "audience", "scope", "visibility", "status"],
@@ -23,7 +50,26 @@
         "item_refs": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
         "production_refs": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
         "prompt_review_required": { "type": "boolean" },
-        "extensions": { "type": "object" }
+        "extensions": {
+          "type": "object",
+          "properties": {
+            "content_studio": {
+              "type": "object",
+              "properties": {
+                "series_layout": { "$ref": "#/$defs/series_layout" },
+                "character_visual_defaults": {
+                  "type": "object",
+                  "properties": {
+                    "female_character": { "$ref": "#/$defs/female_character_visual_defaults" }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
       },
       "additionalProperties": false
     },

@@ -20,6 +20,10 @@ a durable reason, run `python tools/record_why.py --root PROJECT_ROOT` to append
 without replacing earlier entries. `config/template-manifest.json` defines version and
 file ownership.
 
+The WHY recorder accepts an interactive multi-line entry, ending with a single `.`
+line or EOF. Blank-only input makes no change. It initializes an empty or whitespace-only
+WHY file with the generic header before appending a nonblank reason.
+
 ## Workflows
 
 - [Shared data model](docs/DATA_MODEL.md): mini-project, knowledge, character/item, and
@@ -28,6 +32,9 @@ file ownership.
   resolution records, pre-generation prompt archives, and review history.
 - [Prompt review checklist](docs/PROMPT_REVIEW_CHECKLIST.md): agreed briefs, candidate
   scoring, evidence, revision links, evaluator identity, and image-generation gate.
+- [Infographic content and image review](docs/INFOGRAPHIC_REVIEW_CHECKLIST.md): the
+  four-SEU memory-aid standard, excluded practice content, fixed image rubric, and
+  post-generation review record.
 - [Image lifecycle](docs/ASSET_LIFECYCLE.md): accepted source intake, watermark/export
   profiles, metadata checks, and post-publication records.
 

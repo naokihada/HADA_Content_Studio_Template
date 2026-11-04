@@ -171,11 +171,11 @@ def intake_image(
     if prompt_review_id:
         prompt_review = _find_prompt_review(root, prompt_review_id)
         if (
-            prompt_review.get("status") not in {"selected_pass", "selected_below_threshold"}
+            prompt_review.get("status") != "selected_pass"
             or prompt_review.get("work_id") != prompt.get("work_id")
             or prompt_review.get("prompt_resolution_id") != prompt_resolution_id
         ):
-            raise ValueError("prompt review must be complete and match this resolved prompt and production")
+            raise ValueError("image intake requires a passing prompt review that matches this resolved prompt and production")
         chosen = next((item for item in prompt_review.get("candidates", []) if isinstance(item, dict) and item.get("id") == prompt_review.get("selected_candidate_id")), None)
         if chosen is None or chosen.get("prompt_sha256") != prompt.get("prompt_sha256"):
             raise ValueError("selected prompt review candidate does not match the resolved prompt")

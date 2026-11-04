@@ -146,3 +146,19 @@ Each phase will update this record with observed behavior and validation evidenc
 - **Completed:** Conflict-free template-owned changes were merged and missing declared policy/profile files were added. Dev WHY history and AI logs were not copied.
 - **Validation:** `python -B tools/validate.py` and `git diff --check` pass. Unit tests were not run.
 - **Boundary:** No release commit, tag, or push was made.
+
+## Post-commit reconciliation — 2026-11-04
+
+- The user-authored `b0ad8af` v0.1.1 commit is preserved. Its committed public manifest still says `role: dev` and `contains_user_data: true`.
+- The current working tree corrects those manifest fields. All other declared template-owned files now match Dev; the manifest correction remains uncommitted.
+- **Validation:** `python -B tools/validate.py` and `git diff --check` pass. Unit tests were not run.
+- **Release boundary:** The committed snapshot still needs the manifest correction before it is ready to tag. No new commit, tag, or push was made by the agent.
+
+## Final v0.1.1 pre-push check — 2026-11-04
+
+This status supersedes the earlier pending-reconciliation notes.
+
+- The current Template working tree remains version `0.1.1`, with `role: template` and `contains_user_data: false`. All declared template-owned files match the validated Dev source, aside from repository-specific manifest and ReSPEC fields.
+- `python -B tools/validate.py` and `git diff --check` pass. Unit tests were not run.
+- The existing user-authored `b0ad8af` commit still contains the prior `role: dev` manifest values. Commit the current correction before pushing the release snapshot.
+- No `v0.1.1` tag was created; no push was made by the agent.

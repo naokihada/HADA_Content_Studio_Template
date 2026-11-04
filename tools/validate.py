@@ -905,6 +905,20 @@ def validate(root: Path) -> list[str]:
             for ref in record.get(field, []):
                 if not _has_id(records, target, ref):
                     errors.append(f"project {record_id!r} references unknown {target} {ref!r}")
+        extensions = record.get("extensions", {})
+        content_studio = extensions.get("content_studio", {}) if isinstance(extensions, dict) else {}
+        series_layout = content_studio.get("series_layout", {}) if isinstance(content_studio, dict) else {}
+        if isinstance(series_layout, dict) and series_layout.get("layout_variation") == "custom":
+            details = series_layout.get("layout_variation_details")
+            if not isinstance(details, str) or not details.strip():
+                errors.append(f"project {record_id!r} custom series layout variation requires layout_variation_details")
+        character_defaults = content_studio.get("character_visual_defaults", {}) if isinstance(content_studio, dict) else {}
+        female_defaults = character_defaults.get("female_character", {}) if isinstance(character_defaults, dict) else {}
+        if isinstance(female_defaults, dict):
+            age = female_defaults.get("age_years", 18)
+            adult = female_defaults.get("adult", True)
+            if adult is True and isinstance(age, int) and not isinstance(age, bool) and age < 18:
+                errors.append(f"project {record_id!r} cannot mark a female character under 18 as an adult")
     for record_id, record in records["infographic_production"].items():
         if not _has_id(records, "mini_project", record.get("project_id")):
             errors.append(f"infographic production {record_id!r} references an unknown project")
@@ -960,11 +974,11 @@ def validate(root: Path) -> list[str]:
             if review is None:
                 errors.append(f"image generation {generation_id!r} references an unknown prompt review")
             elif (
-                not isinstance(review.get("status"), str) or review.get("status") not in {"selected_pass", "selected_below_threshold"}
+                review.get("status") != "selected_pass"
                 or review.get("work_id") != record.get("work_id")
                 or review.get("prompt_resolution_id") != record.get("prompt_resolution_id")
             ):
-                errors.append(f"image generation {generation_id!r} does not match its completed prompt review")
+                errors.append(f"image generation {generation_id!r} requires a passing, matching prompt review")
             generation_reviews[review_id] = generation_reviews.get(review_id, 0) + 1
         superseded = record.get("supersedes_generation_id")
         if superseded and (not _has_id(records, "image_generation", superseded) or records["image_generation"][superseded].get("asset_id") != record.get("asset_id")):
