@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.1] - 2026-11-04
+
+### Added
+
+- Pre-generation prompt briefs, immutable candidate and review archives, evaluator
+  metadata, revision evidence, selected prompt text, and hashed generation arguments.
+- A configurable project gate requiring prompt review before image generation.
+- Legacy prompt records remain unchanged and are not retroactively scored.
+- Base 0.1.1 WHY lifecycle rules and the append-only `tools/record_why.py` recorder.
+
 ## [0.1.0] - 2026-11-02
 
 ### Added

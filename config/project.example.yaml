@@ -13,3 +13,4 @@ knowledge_refs: []
 character_refs: []
 item_refs: []
 production_refs: []
+prompt_review_required: true

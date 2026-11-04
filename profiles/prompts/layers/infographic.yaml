@@ -1,7 +1,17 @@
 id: infographic-layout
-version: "0.1.0"
+version: "0.1.1"
 prompt: >-
-  Design one infographic with a clear reading order, concise labels, legible hierarchy,
-  and purposeful visual grouping. Preserve the requested language and keep every label
-  faithful to the supplied content. Avoid decorative detail that competes with the
-  central message.
+  Design a static infographic as a memory aid and reference, never as a practice sheet.
+  Do not include quizzes, exercises, fill-in-the-blank items, response questions,
+  self-checks, or answer keys. Organize at least four distinct, complete slide-equivalent
+  knowledge units. Each unit needs one clear takeaway, at least three non-redundant
+  information points, an explicit explanatory relationship, and a static visual memory
+  cue. Do not pad with repeated or invented information; report an insufficient scope
+  before generation. Keep all text legible; expand the canvas or split the layout rather
+  than shrinking text until it is hard to read. Use a clear reading order, legible
+  hierarchy, and purposeful grouping. Include the same character in a full-body view,
+  a face close-up, and a clearly chibi depiction. Preserve the character's identity
+  anchors. Give the full-body view and face close-up their own strongly separated areas,
+  and change the outfit, pose, and art style between those two views. Preserve the
+  requested language and keep every label faithful to the supplied content. Avoid
+  decorative detail that competes with the information or character.

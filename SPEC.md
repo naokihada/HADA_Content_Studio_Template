@@ -1,10 +1,10 @@
 # HADA Content Studio Template — Master Specification
 
 **Specification status:** Approved implementation plan
-**Specification version:** 0.1.0
-**Template version:** 0.1.0
-**Base compatibility:** minimum 0.1.0; tested 0.1.0
-**Status date:** 2026-11-02
+**Specification version:** 0.1.1
+**Template version:** 0.1.1
+**Base compatibility:** minimum 0.1.0; tested 0.1.1
+**Status date:** 2026-11-04
 **Scope:** Content Studio Dev, reusable Template, and local Sample artifacts.
 
 ## 1. Purpose
@@ -26,6 +26,8 @@ Goals:
   motorcycle interests without forcing domain-specific records into one schema.
 - Preserve evidence, attribution, approval state, exact generation prompt, assets, and
   versions from source through final publication.
+- Save and review each image prompt before generation, including the agreed brief,
+  candidate text and hashes, rubric evidence, evaluator identity, and selected prompt.
 - Keep character identity stable while allowing appearance variants such as chibi
   proportions, styles, poses, and outfits.
 - Model reusable items independently from characters, with many-to-many character-item
@@ -36,7 +38,7 @@ Goals:
   the selected destination profile and metadata checks.
 - Keep the initial production module limited to infographics.
 
-Non-goals for 0.1.0:
+Non-goals for 0.1.1:
 
 - Presentation, social carousel authoring, video, songs, animation, long-form fiction,
   Story continuity, or editing-software integration.
@@ -49,27 +51,64 @@ Non-goals for 0.1.0:
 ## 3. Base relationship and versioning
 
 This is a specialized template with its own identity and version. `config/template-manifest.json`
-is the source for `hada-content-studio-template` version `0.1.0`; Base compatibility is
-separate and records minimum/tested Base version `0.1.0`. Schema and content-data
+is the source for `hada-content-studio-template` version `0.1.1`; Base compatibility is
+separate and records minimum Base version `0.1.0` and tested Base version `0.1.1`.
+Schema and content-data
 versions are independent. The Base direct-template updater is not assumed to update
 this specialized template.
 
 ## 4. Artifact boundaries and character-data rule
 
-- **Dev:** source code, schemas, tests, and release preparation. Local workspaces may also contain private project-owner context, archives, or unreviewed assets; these stay outside reusable packages.
+- **Dev:** implementation, schemas, tests, full human-owned `WHY.md`, and existing
+  private imported AI logs. Contains no character instance records or character images.
 - **Template:** reusable schemas, tools, policies, and empty examples only. Contains no
-  character instance records or character images.
-- **Sample:** optional fictional records and assets exercise the reusable workflow and
-  may include a capability infographic. Project-specific records, prompts, and generated
-  originals stay with the local Sample and are excluded from the reusable Template.
-  Any external use requires an approved transformed derivative.
+  character instance records, character images, project prompt-resolution records, or
+  prompt-review archives.
+- **Sample:** fictional `Cute Elf Girl` data and assets plus a tutorial infographic
+  explaining template capabilities. Sample is local and must not be committed by the
+  agent. Future publication must use only approved transformed derivatives; generated
+  originals and internal prompt/provenance records are excluded from publication.
 
 The reusable validator does not hard-code a sample character's name. A Sample manifest
 may declare `artifacts.sample_character_name`; when present, validation requires that
 display name to exist. This keeps the reusable Template generic while allowing this
 local Sample to name its one fictional character.
 
-Public packages contain only reusable template-owned files. Local project records, private logs, secrets, and raw masters stay in their own project unless a release owner explicitly approves them.
+Pre-existing user-owned files are preserved. Public artifact preparation never copies
+Dev WHY history, AI logs, personal data, secrets, or unapproved raw masters.
+
+### 4.1 WHY lifecycle
+
+`WHY.md` is the human-owned, append-only-in-intent record of durable reasons, values,
+priorities, and changes of mind. Before significant work, read the project-root
+`WHY.md`. A missing file is a missing record, not evidence that the project has no
+purpose or priorities.
+
+When the project owner directly states a durable reason or explicitly adopts a proposed
+reason, record it in the project-root `WHY.md`. Do not record transient task directions,
+agent analysis, external facts, or inferred motivations. Do not ask the owner to repeat
+or separately confirm a reason they just stated or adopted. If no reason was stated or
+adopted, do not create content on the owner's behalf.
+
+Use `python tools/record_why.py --root PROJECT_ROOT` to enter and append one reason.
+The tool uses the local date, preserves existing content, and creates a generic WHY
+placeholder only when the file is missing and nonblank reason text was supplied. Blank
+input makes no change. It refuses a symlink or non-file `WHY.md`. The owner may also
+edit the file directly. Preserve the owner's wording and do not invent supporting
+details, attribution, or historical dates.
+
+Record a change of mind as a new dated entry explaining what changed and what prior
+direction it supersedes; keep the earlier entry. Record factual corrections as dated
+clarifications that refer to the earlier entry. The repository-root `WHY.md` is the
+only rationale-history scope declared by Content Studio 0.1.1. Mini-project
+`project.yaml` purpose fields remain concise current descriptions, not historical WHY
+logs. Do not create nested WHY files unless a future SPEC explicitly declares their
+scope and lifecycle.
+
+Dev retains its real project history. Reusable Template and Sample must each include a
+generic purpose-only WHY placeholder; neither may contain Dev's private rationale or
+invented sample motivation. Existing consumer WHY files remain user-owned and are
+never overwritten by a template update.
 
 ## 5. Portable Studio Core
 
@@ -145,6 +184,57 @@ Prompts and internal provider identifiers are private project records and are ne
 copied into public-safe media metadata. Changing a prompt or reference creates a new
 generation/asset version; it does not rewrite the old record.
 
+### 7.1 Pre-generation prompt archive and review
+
+Before creating an image, agree the production brief with the user and preserve it at
+`projects/<domain>/<project-id>/productions/infographic/prompts/<prompt-id>.brief.md`.
+Save the prompt review record beside it as `<prompt-id>.prompt-review.yaml` and the
+selected exact prompt as `<prompt-id>.prompt.md`. All three are private project records
+and must stay outside publication directories. The prompt file contains only the exact
+text to send to the image service; its UTF-8 SHA-256 is also recorded in the review
+record. The existing prompt-resolution YAML remains the source record for layered
+inputs. The review record links to that resolution, while the image-generation
+provenance record remains the source of truth for provider/tool, optional generation
+argument values with their project-relative source path and hash, generated source
+hash, and generation time.
+
+Build one 100-point rubric from the agreed brief, including critical checks for factual
+accuracy, explicit constraints, and contradictions. Keep the rubric and weights fixed
+for that review. Evaluate the initial draft as candidate 1, then create at most four
+revisions, for a maximum of five candidates. A candidate passes at 90 points or higher.
+Each candidate stores its exact text and hash, criterion scores and evidence, critical
+check results, evaluation time, and runtime-reported evaluator metadata. Each revision
+identifies the immediately preceding candidate, the findings it addresses, and the
+concrete changes made. A revision must address every recorded finding from its
+predecessor; unrelated rewrites are not a substitute.
+
+Stop at the first candidate scoring at least 90 and select it. A critical-check failure
+cannot be offset by points from other criteria and cannot pass. If all five candidates
+score below 90, select the highest-scoring candidate, record and report its score as
+below threshold, and do not inflate its score. For a tie, prefer fewer unsupported
+assumptions and clearer instructions; record the selection reason. The validator checks
+record structure and arithmetic, not the truth or quality of an AI judgment.
+
+Record provider, API model ID, displayed model name, and reasoning strength for each
+evaluation only when exposed by the runtime. Use `unknown` or `not_exposed` when a
+value is unavailable; never infer the active model from a setting. Do not switch
+evaluators automatically. If the evaluator becomes unavailable or an observable model
+change occurs during the loop, stop comparison, record the halt, and do not generate an
+image from that incomplete review.
+
+Before the one image-generation attempt for a selected review, verify that the brief,
+review record, and exact selected prompt are saved and validate. The template does not
+call a provider or publish images. Generation is external and non-deterministic; neither
+the prompt review score nor prompt hash guarantees the generated image. Existing
+pre-review prompts and images remain historical records: do not retroactively score,
+rewrite, or imply they were reviewed before generation. New projects enable the review
+gate; projects that predate it may retain their documented legacy state.
+New `project.yaml` examples set `prompt_review_required: true`. Validation and image
+intake require a completed prompt-review record for such productions. A missing flag is
+treated as a legacy project setting and does not rewrite or reject prior generations.
+Validation permits at most one image-generation intake record per review. Because
+provider calls are external, it cannot prove that an unrecorded failed call did not occur.
+
 ## 8. Asset lifecycle, retention, and publication boundary
 
 Non-reproducible AI outputs are source masters, not build artifacts. Preserve source
@@ -209,7 +299,7 @@ result is stored as a versioned durable artifact.
 ## 9. Initial directory contract
 
 ```text
-AGENTS.md, SPEC.md, ReSPEC.md, README.md, CHANGELOG.md, TEMPLATE_BASE.md
+AGENTS.md, SPEC.md, ReSPEC.md, WHY.md, README.md, CHANGELOG.md, TEMPLATE_BASE.md
 config/                         canonical template and project manifests
 schemas/common/                 character, item, relationship, asset, provenance
 schemas/content/                mini-project, knowledge, infographic production
@@ -223,6 +313,7 @@ assets/generations/<generation-id>/             private generation provenance
 assets/discard_candidates/<asset-id>/<version>/  retained unselected sources
 projects/<domain>/<project-id>/ isolated mini-project context and production records
 projects/<domain>/<project-id>/productions/infographic/exports/ durable derivatives
+projects/<domain>/<project-id>/productions/infographic/prompts/ private briefs, reviews, and selected prompts
 profiles/                       prompt layers and infographic/SNS/website profiles
 profiles/prompts/layers/        versioned shared and medium prompt fragments
 profiles/exports/               example social and website transformation profiles
@@ -240,10 +331,10 @@ use YAML with equivalent fields. `tools/validate.py` validates supported schema 
 record paths, unique IDs, and cross-record references; Dev/Template roles reject all
 character instance paths while Sample allows only its declared fictional data.
 
-A local Sample may contain fictional character records and generated reference assets.
-Its original images and prompt provenance remain local; only an approved watermarked
-derivative may be used externally. Reusable schemas and fictional schema-validation
-fixtures are not character records and may exist in tests.
+The Sample alone has character instance data. Its generated original stays outside any
+future public artifact; a watermarked, sanitized derivative may be used in the sample
+infographic. Reusable schemas and fictional schema-validation fixtures are not character
+records and may exist in Dev/Template tests.
 
 ## 10. Validation requirements
 
@@ -259,6 +350,17 @@ metadata scanner failure behavior, deterministic repeated hashes, and publicatio
 records that resolve only to verified derivatives. Prompt checks include
 deterministic layer ordering, required substitution handling, unresolved placeholder
 rejection, layer and reference hash verification, and exact-prompt hash verification.
+Prompt-review validation also checks brief and selected-prompt hashes; candidate count,
+order, and text hashes; rubric weights and score arithmetic; critical-check capping;
+revision findings and mapped changes; evaluator metadata; first-pass or best-candidate
+selection; prompt-resolution linkage; and the generation gate. Template-role validation
+rejects all private project and prompt records. Generation provenance also validates
+project-relative generation-argument files, parsed values, and SHA-256 hashes.
+
+All artifact roles include `tools/record_why.py` and a root `WHY.md`. Static review
+confirms that the recorder appends only explicit input, preserves prior text, does
+nothing on blank input, refuses unsafe WHY targets, and performs no network or Git
+operations. Dev WHY history must not appear in Template or Sample.
 
 Tests use synthetic fixtures only and do not invoke image-generation services. Image
 generation itself is recorded as external and non-deterministic. Export verification
@@ -291,11 +393,16 @@ committed by the agent.
   recorder. Repeated export hashes match; no network or raw-master publication route
   exists.
 - **Phase 5 — Sample character data and capability infographic:** complete. The local
-  Sample exercises one fictional identity, same-ID appearance variants, reusable items,
-  prompt provenance, protected source assets, and a capability infographic. The
-  reusable Template remains free of character records and image files. Template and
-  Sample working trees are local and uncommitted.
+  Sample contains exactly one fictional character, two appearance variants sharing its
+  character ID, a reusable clothing item/variant and outfit link, layered prompt
+  provenance, private immutable source masters, and a Japanese template-capability
+  infographic. Python produced separate website and social derivatives. The Template
+  has no character records or images; Template and Sample remain uncommitted.
 - **Phase 6 — final cross-artifact validation and ReSPEC:** complete. Three ReSPEC
-  loops checked the data contract, prompt/media lifecycle, and privacy/version/Git
-  boundaries. Dev, Template, and Sample tests and role-specific validators pass. No
-  external publication occurred.- **Phase 6 — final cross-artifact validation and ReSPEC:** complete.
+  loops checked the shared schema/data model, source-to-derivative workflow and privacy/
+  version/Git boundaries. Dev, Template, and Sample tests pass independently; each
+  role-specific validator passes. No external publication occurred.
+- **Phase 7 — prompt archive and review gate:** complete. Added incremental prompt
+  candidate archiving, 100-point evaluation records with hard checks and revision links,
+  evaluator identity capture, selected prompt hash verification, and a project-level
+  gate before image intake. Historical records remain unchanged; no provider calls occur.

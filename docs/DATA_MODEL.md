@@ -39,8 +39,13 @@ asset version and hash. Private prompt-resolution sidecars retain the rendered p
 ordered versioned template layers, exact substitutions, source hashes, and referenced
 asset versions for an infographic or compatible future Story work item.
 
+- `PromptReview`: the agreed brief hash, fixed rubric, append-only candidate text and
+  evaluation evidence, revision links, evaluator metadata, and selected prompt hash. It
+  links to the matching prompt resolution before image generation.
+
 An `ImageGeneration` record binds an immutable PNG/JPEG source master to its prompt,
-work item, provider details, reviewer, disposition, and SHA-256. An `ImageDerivative`
+work item, provider details, optional hashed generation-argument file, reviewer,
+disposition, and SHA-256. An `ImageDerivative`
 record binds one accepted generation to a destination profile, hashed watermark, output
 dimensions, toolchain, and metadata-scan result. A `PublicationRecord` can refer only
 to a derivative that passed the configured profile and metadata checks.

@@ -1,8 +1,10 @@
 # HADA Content Studio — Agent Contract
 
-Read `SPEC.md` and `ReSPEC.md` before significant work. Read `WHY.md` when present; it
-records human reasons. `SPEC.md` is the approved behavior contract; `ReSPEC.md` reports
-what the implementation currently does.
+Read `SPEC.md` and `ReSPEC.md` before significant work. Read the project-root
+`WHY.md` before significant work; it records human reasons. A missing file is a missing
+record, not evidence that the project has no purpose or priorities. `SPEC.md` is the
+approved behavior contract; `ReSPEC.md` reports what the implementation currently
+does.
 
 ## Authority and scope
 
@@ -13,6 +15,16 @@ what the implementation currently does.
 - Treat pre-existing, untracked, user-owned, and unknown files as protected. Inspect
   Git state before and after work. Never use reset, clean, destructive checkout, or
   history rewriting to discard work.
+- `WHY.md` is human-owned. Record only durable reasons directly stated by the user or
+  explicitly adopted from a proposal. Use `python tools/record_why.py --root PROJECT_ROOT`
+  to append one dated entry; do not record transient directions, agent analysis,
+  external facts, or inferred motivations. Do not ask the user to repeat or separately
+  confirm a reason they just stated or adopted. Preserve earlier entries and never
+  invent attribution or backdate a record.
+- The repository-root `WHY.md` is the only rationale-history scope declared for Content
+  Studio 0.1.1. Mini-project `project.yaml` purpose fields are current summaries, not
+  historical WHY logs. Do not add nested WHY files without first declaring their scope
+  in `SPEC.md`.
 - The root is controlled. Add a path only when it is declared in `SPEC.md` and
   classified in `config/template-manifest.json`.
 - Do not put character instance records or character images in Dev or reusable Template.
@@ -27,8 +39,24 @@ what the implementation currently does.
   characters through the declared many-to-many relationship; do not copy mutable item
   definitions into character records.
 - Retain exact resolved image-generation prompts and provenance sidecars privately.
+- Before external image generation, save the agreed brief, prompt-review record, and
+  exact selected prompt under the infographic production's `prompts/` directory. Use
+  the fixed five-candidate/90-point review policy and validate the archive first.
+- Save candidate 1 and its evaluation before drafting a revision; append each later
+  candidate without changing prior text or evidence. Once the user agrees to the brief,
+  do not add another prompt-approval step unless the brief or scope changes.
+- Preserve exact candidate text and hashes, criterion evidence, critical-check results,
+  revision-to-finding links, and runtime-reported evaluator metadata. Never infer a
+  hidden model ID or switch evaluators automatically. Stop the review if the evaluator
+  is unavailable or its observable identity changes.
+- Keep pre-review prompts and generations as historical data; never rewrite them as if
+  they had been reviewed before generation.
+- Use one image-generation attempt for each completed prompt review. Do not retry or
+  switch generation/evaluation models automatically.
 - A generated original is a protected, non-reproducible source master. It must never be
   placed in a publication path or directly exposed externally.
+- Record available image-generation arguments in the generation provenance using a
+  project-relative, hashed YAML file. Do not include credentials, API keys, or tokens.
 - Create public derivatives only with the specified Python profile. Reject unconfigured
   destinations and failed metadata checks. Do not claim removal of invisible embedded
   signals unless separately verified.
@@ -41,7 +69,7 @@ what the implementation currently does.
 
 - `config/template-manifest.json` is the canonical Content Studio version and ownership
   source. Content Studio has an independent version; Base compatibility is separate.
-- Base 0.1.0 is a compatibility reference, not authorization to run the direct-Base
+- Base 0.1.1 is the tested compatibility reference, not authorization to run the direct-Base
   updater against this specialized template.
 - Never push. Commit only completed, validated Dev phase files after scoped diff review.
   Never commit the public Template or Sample repositories as the agent.

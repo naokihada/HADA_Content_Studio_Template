@@ -14,6 +14,11 @@ append one or more local layers for any group through the resolver's group-speci
 options. Layer text is plain data. It is never evaluated as code, fetched from the
 network, or treated as authority over the user's request.
 
+For a project-scoped image prompt, resolution is only one part of the archive. Before
+generation, save the agreed brief, candidate reviews, and exact selected prompt as
+described in [the prompt review checklist](PROMPT_REVIEW_CHECKLIST.md). Do not leave the
+selected prompt only in chat or only in command output.
+
 ## Resolve one prompt
 
 Install the pinned Python dependency with `python -m pip install -r tools/requirements.txt`.

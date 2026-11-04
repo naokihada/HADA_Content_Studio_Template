@@ -3,12 +3,12 @@
   "template": {
     "id": "hada-content-studio-template",
     "name": "HADA Content Studio Template",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "base_compatibility": {
     "template_id": "hada-base-template",
     "minimum_version": "0.1.0",
-    "tested_version": "0.1.0"
+    "tested_version": "0.1.1"
   },
   "compatibility": {
     "schema_version": "0.1.0",
@@ -23,9 +23,9 @@
     "template_base": "TEMPLATE_BASE.md"
   },
   "artifacts": {
-    "role": "template",
+    "role": "dev",
     "character_instances_allowed": false,
-    "contains_user_data": false,
+    "contains_user_data": true,
     "sample_character_data": false
   },
   "ownership": {

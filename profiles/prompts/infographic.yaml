@@ -1,6 +1,6 @@
 schema_version: "0.1.0"
 id: infographic-default
-version: "0.1.0"
+version: "0.1.1"
 layers:
   shared:
     - profiles/prompts/layers/shared.yaml
